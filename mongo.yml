@@ -1,0 +1,7 @@
+---
+ 
+- hosts: dev
+  remote_user: ubuntu
+  become: yes
+  roles:
+     - mongodb

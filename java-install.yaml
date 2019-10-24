@@ -1,0 +1,11 @@
+---
+ - hosts: dev
+   become: yes
+   remote_user: ec2-user
+   tasks:
+    - name: Install openjdk 
+      yum: 
+        name: java-1.8.0-openjdk.x86_64  
+        state: present
+
+

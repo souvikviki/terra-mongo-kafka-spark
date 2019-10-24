@@ -1,0 +1,40 @@
+---
+- hosts: dev
+  become: yes
+  remote_user: ubuntu
+  tasks:
+
+  - name: Installing java and jdk
+    apt:
+     name: default-jdk
+     update_cache: yes
+
+
+  - name: Downloading kafka binary
+    get_url:
+      url: http://www-us.apache.org/dist/kafka/2.2.1/kafka_2.12-2.2.1.tgz
+      dest: /tmp/
+
+  - name: Extarcting binary
+    unarchive:
+      src: /tmp/kafka_2.12-2.2.1.tgz
+      dest: /usr/local/
+      remote_src: yes
+
+  #- name: Renaming directory
+   # command: mv /usr/local/kafka_2.12-2.2.1 /usr/local/kafka
+
+
+
+  - name:  Starting zookeeper
+    shell: cd /usr/local/kafka_2.12-2.2.1 && sudo nohup bin/zookeeper-server-start.sh config/zookeeper.properties &
+
+
+  - name: Exporting memory variable
+    shell: "echo $KAFKA_HEAP_OPTS"
+    environment:
+      KAFKA_HEAP_OPTS: -Xmx1G -Xms1G
+
+  - name:  Starting kafka
+    shell: cd /usr/local/kafka_2.12-2.2.1 && sudo nohup bin/kafka-server-start.sh config/server.properties &
+

@@ -1,0 +1,27 @@
+---
+ - hosts: dev
+   become: true
+   remote_user: centos
+   
+
+   tasks:
+   - name: Installing java 
+     yum: name=java state=latest
+
+   - name: Downloading necessary packages
+     get_url: 
+       url: "{{ item }}"
+       dest: /opt
+     with_items:
+     - http://apachemirror.wuchna.com/spark/spark-2.4.4/spark-2.4.4-bin-hadoop2.7.tgz
+
+   - name: Extracting archives
+     unarchive:
+       src: "{{ item }}"
+       dest: /opt
+       remote_src: yes
+     with_items:
+      - /opt/spark-2.4.4-bin-hadoop2.7.tgz
+
+   - name: Installing scala
+     shell: cd /opt/spark-2.4.4-bin-hadoop2.7/sbin/ && sudo sh start-master.sh
